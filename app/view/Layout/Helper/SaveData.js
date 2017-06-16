@@ -9,7 +9,7 @@ Ext.define('ES.util.Helper.Savedata', {
          * @param {int} vel Current vehicle speed
          * @param {string} lp License Plate
          */
-        saveReceivedData: function (lat1, lon1, lat2, lon2, vel, lp) {
+        saveReceivedData: function(lat1, lon1, lat2, lon2, vel, lp) {
             ES.util.Helper.GlobalVars.lat1 = lat1;
             ES.util.Helper.GlobalVars.lon1 = lon1;
             ES.util.Helper.GlobalVars.lat2 = lat2;
@@ -23,12 +23,14 @@ Ext.define('ES.util.Helper.Savedata', {
          * @param {float} lat1 Latitude from the current address
          * @param {float} lon1 Longitude from the current address
          */
-        saveCoordinates: function (lat1, lon1) {
-            var polylineData = {
-                lat: lat1,
-                lng: lon1
-            };
-            ES.util.Helper.GlobalVars.flightPathCoordinates.push(polylineData);
+        saveCoordinates: function(lat1, lon1) {
+            if (ES.util.Helper.Polyline.getLineSymbol()) {
+                var polylineData = {
+                    lat: lat1,
+                    lng: lon1
+                };
+                ES.util.Helper.GlobalVars.flightPathCoordinates.push(polylineData);
+            }
         }
     }
 });

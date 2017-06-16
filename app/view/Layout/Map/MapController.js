@@ -26,9 +26,10 @@ Ext.define('ES.view.Layout.Map.MapController', {
             component: {
                 'map': {
                     mapready: function(gmappanel) {
-             
+
                         gmappanel.gmap.setZoom(6);
                         var isInitialized = false;
+                        var msg;
 
                         startService();
 
@@ -37,11 +38,16 @@ Ext.define('ES.view.Layout.Map.MapController', {
                             if (!ES.util.Helper.Validations.validateToken()) {
                                 //Validate and retreive token
                                 setTimeout(function() {
-                                    
+
                                     if (!ES.util.Helper.GlobalVars.isOffline) {
                                         //Creates a new Websocket
                                         client = new WebSocket(ES.util.Helper.GlobalVars.ws, ES.util.Helper.GlobalVars.protocol);
                                         client.onopen = function() {
+
+                                            if (msg) {
+                                                msg.close();
+                                            }
+
                                             //ES.util.Helper.Alerts.wsOpenedAlert();
                                             ES.util.Helper.GlobalVars.countPing = 1;
                                             //Sends the token data to the server
@@ -61,7 +67,7 @@ Ext.define('ES.view.Layout.Map.MapController', {
                                             ES.util.Helper.Alerts.wsErrorAlert();
                                         };
                                         client.onclose = function() {
-                                            ES.util.Helper.Alerts.wsClosedAlert();
+                                            msg = Ext.Msg.alert(locale.alert, locale.end);
                                             setTimeout(function() {
                                                 isInitialized = true;
                                                 startService();
@@ -70,7 +76,7 @@ Ext.define('ES.view.Layout.Map.MapController', {
                                             ES.util.Helper.GlobalVars.countPing = 0;
                                             ES.util.Helper.GlobalVars.countTime = 0;
                                         };
-                                        client.onmessage = function(e) {  
+                                        client.onmessage = function(e) {
                                             if (!ES.util.Helper.GlobalVars.isOffline) {
                                                 //Clean the timeline if necessary
                                                 if (e && e.data) {
@@ -95,6 +101,7 @@ Ext.define('ES.view.Layout.Map.MapController', {
                                                         client.close();
                                                         Ext.toast(locale.tokenerror);
                                                     } else {
+                                                        console.log(e.data);
                                                         ES.util.Helper.Timeline.cleanTimeline(Ext.getStore('timeline'));
                                                         //Save the received data
                                                         ES.util.Helper.Savedata.saveReceivedData(parseFloat(JSON.parse(e.data).loc.lat), parseFloat(JSON.parse(e.data).loc.lon), parseFloat(localStorage.getItem('dstLat')), parseFloat(localStorage.getItem('dstLng')), parseFloat(JSON.parse(e.data).gsp));
@@ -107,8 +114,7 @@ Ext.define('ES.view.Layout.Map.MapController', {
                                                         //Check if the vehicle is parked or not
                                                         ES.util.Helper.Polyline.checkIfParked();
                                                         //Starts polyline drawing
-                                                        ES.util.Helper.Polyline.initPolylineDraw(gmappanel.gmap, ES.util.Helper.Polyline.isParked());
-                                                        console.log(JSON.parse(e.data));
+                                                        ES.util.Helper.Polyline.initPolylineDraw(gmappanel.gmap);
                                                         //Follow the last received address, changing the map focus/motion
                                                         ES.util.Helper.Polyline.focusOnAddress(gmappanel.gmap);
                                                     }
@@ -117,7 +123,7 @@ Ext.define('ES.view.Layout.Map.MapController', {
                                                 client.close();
                                             }
                                         };
-                                        
+
                                     }
                                 }, 1000);
                             }

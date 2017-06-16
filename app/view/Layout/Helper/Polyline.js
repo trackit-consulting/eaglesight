@@ -8,11 +8,12 @@ Ext.define('ES.util.Helper.Polyline', {
 
             var polylineBorder = new google.maps.Polyline({
                 path: ES.util.Helper.GlobalVars.flightPathCoordinates,
-                strokeColor: '#fc302e', 
+                strokeColor: '#fc302e',
                 strokeOpacity: 1.0,
                 strokeWeight: 7,
                 optimized: false
             });
+
 
             var polyline = new google.maps.Polyline({
                 path: ES.util.Helper.GlobalVars.flightPathCoordinates,
@@ -22,10 +23,13 @@ Ext.define('ES.util.Helper.Polyline', {
                 optimized: false
             });
 
-            ES.util.Helper.Polyline.drawPoints(polyline, map);
+            if (ES.util.Helper.Polyline.getLineSymbol()) {
+                polylineBorder.setMap(map);
+                polyline.setMap(map);
+            }
 
-            polylineBorder.setMap(map);
-            polyline.setMap(map);
+            ES.util.Helper.Polyline.drawPoints(polylineBorder, map);
+
         },
 
         /**
@@ -33,9 +37,9 @@ Ext.define('ES.util.Helper.Polyline', {
          * @param {int} vel Retreive vehicle speed
          * @param {int} countVel Checks if vehicle is parked or not
          */
-        getLineSymbol: function(vel, countVel) {
+        getLineSymbol: function() {
             var lineSymbol;
-            if (countVel > 1 && vel <= 0) {
+            if (ES.util.Helper.GlobalVars.countVel > 1 && parseInt(ES.util.Helper.GlobalVars.vel) <= 0) {
                 return false;
             } else {
                 return true;
@@ -51,7 +55,7 @@ Ext.define('ES.util.Helper.Polyline', {
 
             var getDirection;
 
-            if (ES.util.Helper.Polyline.getLineSymbol(parseInt(ES.util.Helper.GlobalVars.vel), ES.util.Helper.Polyline.isParked())) {
+            if (ES.util.Helper.Polyline.getLineSymbol()) {
                 getDirection = ES.util.Helper.Polyline.getPolylineMarker(ES.util.Helper.GlobalVars.currentDirection);
             } else {
                 getDirection = 'resources/pointers/pointer_stop_shrink.gif';
@@ -82,7 +86,7 @@ Ext.define('ES.util.Helper.Polyline', {
             google.maps.event.addDomListener(marker, 'click', function() {
 
                 ES.util.Helper.Timeline.showAddress(marker.getPosition().lat(), marker.getPosition().lng(), Ext.ComponentQuery.query('map')[0], false, null);
-                
+
             });
 
             ES.util.Helper.Polyline.addListeners(flightPath, marker, licensePlate, map);
@@ -105,11 +109,11 @@ Ext.define('ES.util.Helper.Polyline', {
             var showLp, isVisible, action;
             if (ES.util.Helper.Mobile.isMobile()) {
                 action = 'click';
-            }else{
+            } else {
                 action = 'mouseover';
             }
             google.maps.event.addDomListener(marker, action, function() {
-            showLp = new google.maps.Marker({
+                showLp = new google.maps.Marker({
                     icon: licensePlate,
                     label: {
                         text: localStorage.getItem("vhcLp"),
@@ -120,15 +124,15 @@ Ext.define('ES.util.Helper.Polyline', {
                     map: map,
                     optimized: false
                 });
-            google.maps.event.addDomListener(showLp, "click", function() {
-                 showLp.setMap(null);
-            });
+                google.maps.event.addDomListener(showLp, "click", function() {
+                    showLp.setMap(null);
+                });
             });
             google.maps.event.addDomListener(marker, 'mouseout', function() {
                 showLp.setMap(null);
             });
         },
-        
+
         /**
          * Draw Marker
          * @param {string[]} value Receive Marker Direction
@@ -198,10 +202,6 @@ Ext.define('ES.util.Helper.Polyline', {
             if (ES.util.Helper.GlobalVars.vel > 0) {
                 ES.util.Helper.GlobalVars.countVel = 0;
             }
-        },
-
-        isParked: function() {
-            return ES.util.Helper.GlobalVars.countVel;
         },
 
         /**
