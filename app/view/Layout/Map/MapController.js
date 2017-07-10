@@ -43,16 +43,12 @@ Ext.define('ES.view.Layout.Map.MapController', {
                                         //Creates a new Websocket
                                         client = new WebSocket(ES.util.Helper.GlobalVars.ws, ES.util.Helper.GlobalVars.protocol);
                                         client.onopen = function() {
-
                                             if (msg) {
                                                 msg.close();
                                             }
-
-                                            //ES.util.Helper.Alerts.wsOpenedAlert();
                                             ES.util.Helper.GlobalVars.countPing = 1;
                                             //Sends the token data to the server
                                             ES.util.Helper.Initialize.sendId(client, ES.util.Helper.Token.tokenId());
-                                            //Adds a new marker to point the route destination
                                             sendPing = setInterval(function() {
                                                 var ping = {};
                                                 ping.type = "ping";
@@ -101,7 +97,6 @@ Ext.define('ES.view.Layout.Map.MapController', {
                                                         client.close();
                                                         Ext.toast(locale.tokenerror);
                                                     } else {
-                                                        console.log(e.data);
                                                         ES.util.Helper.Timeline.cleanTimeline(Ext.getStore('timeline'));
                                                         //Save the received data
                                                         ES.util.Helper.Savedata.saveReceivedData(parseFloat(JSON.parse(e.data).loc.lat), parseFloat(JSON.parse(e.data).loc.lon), parseFloat(localStorage.getItem('dstLat')), parseFloat(localStorage.getItem('dstLng')), parseFloat(JSON.parse(e.data).gsp));
