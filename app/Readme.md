@@ -1,69 +1,30 @@
-# Eagle Sight
- 
-This project consists on a web app which follow the course of a car, in real time, for a period of time.
- 
- 
-This project is divided into two more parts that can be consulted here:
-- Server (https://github.com/trackit-consulting/eagleserver)
-- Express (https://github.com/trackit-consulting/eagleexpress)
- 
-### Prerequisites
- 
-What you need to create an application similar to this:
- 
-- Visual Studio Code or other similar IDE;
-- Ext sdk to generate you app;
- 
-## Basic Application Structure
- 
-Applications that target a single toolkit will have the following structure.
- 
-    app/                # Contains JavaScript code
-        model/          # Data model classes
-        view/           # Views as well as ViewModels and ViewControllers
-        store/          # Data stores
-        controller/     # Global / application-level controllers
- 
-    overrides/          # JavaScript code that is automatically required
- 
-    sass/
-        etc/            # Misc Sass code (all.scss is imported by default)
-        var/            # Sass variable and mixin declarations
-        src/            # Sass rules
- 
-    resources/          # Assets such as images, fonts, etc.
- 
-See the [Sass readme](sass/Readme.md) for details on the "sass" folder.
- 
-##Development
- 
-To generate you web app:
-```
-sencha -sdk "folder that contains ext sdk" generate app -classic <project name> "folder that will the project be in"
-```
- 
-To make your web app follows MVC model you need to make:
-```
-sencha generate view <folder name>.<file name>
-```
- 
-To watch your web app running:
-```
-sencha app watch
-```
- 
-After finishing the development off your web app, you need to build your project:
-```
-sencha app build testing
-```
- 
-When development is finished:
-```
-sencha app build
-```
- 
-###Authors
- 
-* **Ruben Diogo** - [rubend151] (https://github.com/rubend151)
- 
-* **Diogo Banha** - [DiogoBanha97] (https://github.com/DiogoBanha97)
+# ./controller
+
+This folder contains the application's global controllers. ViewControllers are located
+alongside their respective view class in `"./view"`. These controllers are used for routing
+and other activities that span all views.
+
+# ./model
+
+This folder contains the application's (data) Model classes.
+
+# ./view
+
+This folder contains the views as well as ViewModels and ViewControllers depending on the
+application's architecture. Pure MVC applications may not have ViewModels, for example. For
+MVCVM applications or MVC applications that use ViewControllers, the following directory
+structure is recommended:
+
+    ./view/
+        foo/                    # Some meaningful grouping of one or more views
+            Foo.js              # The view class
+            FooController.js    # The controller for Foo (a ViewController)
+            FooModel.js         # The ViewModel for Foo
+
+This structure helps keep these closely related classes together and easily identifiable in
+most tabbed IDE's or text editors.
+
+# ./store
+
+This folder contains any number of store instances or types that can then be reused in the
+application.
